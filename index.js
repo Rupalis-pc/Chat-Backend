@@ -15,10 +15,18 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "https://chat-sphere-nine-cyan.vercel.app",
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
-app.use(cors());
+// Middleware
+app.use(cors({
+  origin: FRONTEND_URL,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI)
@@ -29,11 +37,11 @@ app.use("/auth", authRoutes);
 
 // socket io logic
 io.on("connection", (socket) => {
-  console.log("user connected", socket.io);
+  console.log("user connected", socket.id);
 
   socket.on("send_message", async (data) => {
     const { sender, receiver, message } = data;
-    const newMessage = new Messages({ sender, receiver, content:message });
+    const newMessage = new Messages({ sender, receiver, content: message });
     await newMessage.save();
 
     socket.broadcast.emit("receive_message", data);
