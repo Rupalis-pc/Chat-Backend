@@ -22,7 +22,7 @@ const io = new Server(server, {
 
 // Middleware
 app.use(cors({
-  origin: FRONTEND_URL,
+  origin: "https://chat-sphere-nine-cyan.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
